@@ -1,0 +1,11 @@
+{
+  "name": "Sporthub",
+  "short_name": "Sporthub",
+  "description": "Football news, betting tips and fan polls",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#083D25",
+  "theme_color": "#0F6B3F",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
