@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sporthub — football news, tips and polls</title>
+<meta name="description" content="Football news, match updates, betting analysis and fan polls.">
+<meta name="theme-color" content="#0F6B3F">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<style>
+:root{--turf:#0F6B3F;--deep:#083D25;--ink:#12201A;--line:#DDE5E0;--flare:#FFC72C;--mist:#F2F5F3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--mist);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+h1,h2,h3{font-family:"Arial Narrow","Barlow Condensed",Impact,sans-serif;letter-spacing:-.01em;line-height:1.05;margin:.3em 0}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--flare);outline-offset:2px}
+header{background:var(--deep);color:#fff;position:sticky;top:0;z-index:5}
+.bar{max-width:1100px;margin:auto;padding:0 16px;height:56px;display:flex;align-items:center;gap:18px}
+.logo{font:800 26px/1 "Arial Narrow",Impact,sans-serif}.logo b{color:var(--flare)}
+nav{display:flex;gap:16px;flex:1;overflow-x:auto;white-space:nowrap;font-size:14px;font-weight:600}
+nav a:hover{color:var(--flare)}
+main{max-width:1100px;margin:auto;padding:20px 16px}
+.hero{display:block;position:relative;border-radius:12px;overflow:hidden;background:var(--deep);color:#fff;margin-bottom:20px}
+.hero img{width:100%;height:320px;object-fit:cover;opacity:.7;display:block}
+.hero div{position:absolute;left:0;right:0;bottom:0;padding:18px;background:linear-gradient(transparent,var(--deep))}
+.hero h1{font-size:clamp(30px,6vw,52px);margin:4px 0 0}.hero small{color:var(--flare);font-weight:600}
+.cols{display:grid;gap:20px;grid-template-columns:1fr}
+@media(min-width:900px){.cols{grid-template-columns:1fr 320px}}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));align-content:start}
+.card{display:block;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.card img{width:100%;height:170px;object-fit:cover;display:block}
+.card>div{padding:14px}.card small{color:var(--turf);font-weight:600}.card h3{font-size:22px}
+.card p{margin:4px 0;font-size:14px;opacity:.75}
+.meta{display:flex;gap:12px;font-size:12px;opacity:.65;align-items:center}
+.meta svg{vertical-align:-2px}
+article{max-width:680px;margin:auto}
+article h1{font-size:clamp(34px,7vw,52px)}article .body p{font-size:18px;line-height:1.65}
+article img.cover{width:100%;border-radius:10px;margin:12px 0}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.btn,button,.chip{font:inherit;cursor:pointer}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--line);background:#fff;border-radius:99px;font-size:14px}
+.chip.on{border-color:var(--turf);color:var(--turf)}
+.btn{background:var(--turf);color:#fff;border:0;border-radius:6px;padding:9px 14px;font-weight:600}
+input,select,textarea{width:100%;font:inherit;padding:9px;border:1px solid var(--line);border-radius:6px;background:#fff;margin:4px 0}
+.box{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:6px;padding:9px;margin:6px 0}
+.opt:hover{border-color:var(--turf)}
+.track{height:8px;background:var(--mist);border-radius:4px}.track i{display:block;height:8px;background:var(--turf);border-radius:4px}
+.row{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:8px 0;font-size:14px}.row span{flex:1}
+.row button,.lnk{background:none;border:0;text-decoration:underline;cursor:pointer;font:inherit;color:inherit}
+.msg{background:rgba(255,199,44,.3);padding:8px;border-radius:6px;margin:8px 0}
+footer{background:var(--deep);color:#ffffffcc;margin-top:40px;padding:26px 16px;font-size:14px}
+footer div{max-width:1100px;margin:auto;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between}
+#install{position:fixed;left:12px;right:12px;bottom:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 4px 20px #0003;z-index:9}
+#install[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <a class="logo" href="#/">SPORT<b>HUB</b></a>
+  <nav><a href="#/category/football-news">News</a><a href="#/category/betting-tips">Betting Tips</a><a href="#/category/match-updates">Matches</a><a href="#/polls">Polls</a></nav>
+  <a href="#/search" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a>
+</div></header>
+<main id="app"></main>
+<footer><div><span><b>SPORTHUB</b><br>Your home for football news, updates and analysis.</span>
+<span><a href="#/privacy">Privacy Policy</a> &nbsp; <a href="#/admin">Admin</a> &nbsp; © 2026 Sporthub</span></div></footer>
+<div id="install" hidden><b>Install Sporthub</b><p style="margin:4px 0 10px">Get football news and updates from your home screen.</p>
+<button class="btn" id="yes">Install</button> <button class="lnk" id="no">Not now</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+/* ===== 1. Paste your Supabase values here (Project Settings > API). The anon key is safe to expose; RLS protects your data. ===== */
+const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const app = document.getElementById("app");
+const COLS = "id,title,slug,excerpt,featured_image,likes_count,published_at,categories(name,slug)";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const vid = () => { let i = localStorage.getItem("sh_vid"); if (!i) { i = crypto.randomUUID(); localStorage.setItem("sh_vid", i); } return i; };
+const slugify = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const ago = d => { if (!d) return ""; const m = Math.floor((Date.now() - new Date(d)) / 6e4);
+  return m < 60 ? Math.max(m, 1) + " min ago" : m < 1440 ? Math.floor(m / 60) + " hours ago" : new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); };
+const heart = f => `<svg width="15" height="15" viewBox="0 0 24 24" fill="${f ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg>`;
+const shareIco = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>`;
+const fail = e => `<p class="msg">Something went wrong: ${esc(e.message || e)}. Check your Supabase URL and key in index.html.</p>`;
+const card = p => `<a class="card" href="#/post/${esc(p.slug)}">${p.featured_image ? `<img src="${esc(p.featured_image)}" alt="" loading="lazy">` : ""}<div><small>${esc(p.categories?.name)}</small><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><div class="meta"><span>${heart()} ${p.likes_count}</span><span>${ago(p.published_at)}</span></div></div></a>`;
+const grid = list => `<div class="grid">${list.map(card).join("")}</div>`;
+
+/* ===== Router ===== */
+async function route() {
+  const [a, b] = location.hash.replace(/^#\/?/, "").split("/");
+  document.title = "Sporthub — football news, tips and polls"; window.scrollTo(0, 0);
+  try {
+    if (a === "post") await post(b); else if (a === "category") await category(b); else if (a === "search") await search(decodeURIComponent(b || ""));
+    else if (a === "polls") { app.innerHTML = `<h1>Polls</h1><div id="poll"></div>`; await poll(); }
+    else if (a === "admin") await admin(); else if (a === "privacy") privacy(); else await home();
+  } catch (e) { app.innerHTML = fail(e); }
+}
+addEventListener("hashchange", route);
+
+/* ===== Pages ===== */
+async function home() {
+  const { data, error } = await sb.from("posts").select(COLS + ",featured").eq("status", "published").order("published_at", { ascending: false }).limit(13);
+  if (error) throw error;
+  const hero = data.find(p => p.featured) || data[0], rest = data.filter(p => p !== hero);
+  app.innerHTML = (hero ? `<a class="hero" href="#/post/${esc(hero.slug)}">${hero.featured_image ? `<img src="${esc(hero.featured_image)}" alt="">` : "<div style='height:200px'></div>"}<div><small>${esc(hero.categories?.name)} · ${ago(hero.published_at)}</small><h1>${esc(hero.title)}</h1></div></a>` : `<p>No posts yet. Publish your first story from the Admin page.</p>`)
+    + `<div class="cols">${grid(rest)}<aside id="poll"></aside></div>`;
+  poll();
+}
+async function category(s) {
+  const { data: c } = await sb.from("categories").select("id,name").eq("slug", s).maybeSingle();
+  if (!c) { app.innerHTML = "<p>Category not found.</p>"; return; }
+  const { data } = await sb.from("posts").select(COLS).eq("category_id", c.id).eq("status", "published").order("published_at", { ascending: false }).limit(30);
+  app.innerHTML = `<h1>${esc(c.name)}</h1>` + (data.length ? grid(data) : "<p>No posts in this category yet.</p>");
+}
+async function search(q) {
+  app.innerHTML = `<form id="sf" style="display:flex;gap:8px"><input name="q" placeholder="Search Sporthub" value="${esc(q)}"><button class="btn">Search</button></form><div id="res" style="margin-top:16px"></div>`;
+  document.getElementById("sf").onsubmit = e => { e.preventDefault(); location.hash = "#/search/" + encodeURIComponent(e.target.q.value); };
+  const t = q.replace(/[%,()]/g, " ").trim(); if (!t) return;
+  const { data } = await sb.from("posts").select(COLS).eq("status", "published").or(`title.ilike.%${t}%,excerpt.ilike.%${t}%,content.ilike.%${t}%`).limit(30);
+  document.getElementById("res").innerHTML = data.length ? grid(data) : `<p>No results for “${esc(t)}”. Try a club or player name.</p>`;
+}
+async function post(s) {
+  const { data: p } = await sb.from("posts").select(COLS + ",content,seo_title,seo_description,allow_comments,category_id").eq("slug", s).eq("status", "published").maybeSingle();
+  if (!p) { app.innerHTML = "<p>Post not found.</p>"; return; }
+  document.title = (p.seo_title || p.title) + " | Sporthub";
+  const url = location.href, enc = encodeURIComponent, key = "liked_" + p.id; let liked = localStorage.getItem(key) === "1", n = p.likes_count;
+  app.innerHTML = `<article><small style="color:var(--turf);font-weight:600">${esc(p.categories?.name)}</small><h1>${esc(p.title)}</h1>
+  <div class="meta">${new Date(p.published_at).toLocaleDateString("en-GB", { dateStyle: "long" })} · By Sporthub</div>
+  ${p.featured_image ? `<img class="cover" src="${esc(p.featured_image)}" alt="">` : ""}
+  <div class="body">${(p.content || "").split(/\n{2,}/).map(x => `<p>${esc(x)}</p>`).join("")}</div>
+  <div class="acts"><button class="chip ${liked ? "on" : ""}" id="like">${heart(liked)} <span>${n}</span></button>
+  <button class="chip" id="share">${shareIco} Share</button>
+  <a class="chip" target="_blank" rel="noopener" href="https://wa.me/?text=${enc(p.title + " " + url)}">WhatsApp</a>
+  <a class="chip" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=${enc(url)}">Facebook</a>
+  <a class="chip" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text=${enc(p.title)}&url=${enc(url)}">X</a>
+  <button class="chip" id="copy">Copy link</button></div>
+  ${p.allow_comments === false ? "" : `<h2>Comments</h2><div id="cl"></div><div class="box"><input id="cn" placeholder="Name" maxlength="60"><textarea id="ct" rows="3" maxlength="1000" placeholder="Write a comment"></textarea><button class="btn" id="cs">Post comment</button><p id="cm"></p></div>`}
+  <h2 style="margin-top:32px">Related posts</h2><div id="rel"></div></article>`;
+  sb.rpc("add_view", { p_post: p.id });
+  const $ = i => document.getElementById(i);
+  $("like").onclick = async () => { const { data } = await sb.rpc("toggle_like", { p_post: p.id, p_visitor: vid() }); if (typeof data === "number") n = data;
+    liked = !liked; localStorage.setItem(key, liked ? "1" : "0"); $("like").className = "chip " + (liked ? "on" : ""); $("like").innerHTML = heart(liked) + ` <span>${n}</span>`; };
+  $("share").onclick = () => navigator.share ? navigator.share({ title: p.title, url }).catch(() => {}) : $("copy").click();
+  $("copy").onclick = async () => { await navigator.clipboard.writeText(url); $("copy").textContent = "Copied"; setTimeout(() => $("copy").textContent = "Copy link", 1500); };
+  if ($("cl")) {
+    const { data: cs } = await sb.from("comments").select("name,content").eq("post_id", p.id).eq("status", "approved").order("created_at", { ascending: false });
+    $("cl").innerHTML = (cs || []).map(c => `<p><b>${esc(c.name)}</b><br>${esc(c.content)}</p>`).join("");
+    $("cs").onclick = async () => { const name = $("cn").value.trim(), content = $("ct").value.trim();
+      if (!name || !content) { $("cm").textContent = "Enter your name and a comment."; return; }
+      const { error } = await sb.from("comments").insert({ post_id: p.id, name, content, status: "pending" });
+      $("cm").textContent = error ? "Could not post your comment. Try again." : "Thanks! Your comment will appear once approved."; if (!error) $("ct").value = ""; };
+  }
+  const { data: rel } = await sb.from("posts").select(COLS).eq("status", "published").eq("category_id", p.category_id).neq("id", p.id).limit(3);
+  $("rel").innerHTML = rel?.length ? grid(rel) : "<p>More stories coming soon.</p>";
+}
+async function poll() {
+  const box = document.getElementById("poll"); if (!box) return;
+  const { data: ps } = await sb.from("polls").select("id,question").eq("status", "active").lte("starts_at", new Date().toISOString()).order("created_at", { ascending: false }).limit(1);
+  const p = ps?.[0]; if (!p) { box.innerHTML = "<p>No active poll right now.</p>"; return; }
+  const { data: o } = await sb.from("poll_options").select("id,option_name,votes").eq("poll_id", p.id);
+  const voted = localStorage.getItem("voted_" + p.id) === "1", total = o.reduce((s, x) => s + x.votes, 0) || 1;
+  box.innerHTML = `<div class="box"><h2>${esc(p.question)}</h2>` + o.map(x => voted
+    ? `<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:14px"><span>${esc(x.option_name)}</span><span>${Math.round(x.votes / total * 100)}%</span></div><div class="track"><i style="width:${x.votes / total * 100}%"></i></div></div>`
+    : `<button class="opt" data-id="${x.id}">${esc(x.option_name)}</button>`).join("") + `</div>`;
+  box.querySelectorAll(".opt").forEach(b => b.onclick = async () => { await sb.rpc("cast_vote", { p_poll: p.id, p_option: b.dataset.id, p_visitor: vid() }); localStorage.setItem("voted_" + p.id, "1"); poll(); });
+}
+function privacy() {
+  app.innerHTML = `<article><h1>Privacy Policy</h1><div class="body"><p>Sporthub stores the name you enter with a comment and an anonymous visitor ID in your browser's local storage, used only to prevent repeat likes and poll votes.</p><p>Comments are reviewed before they appear. Likes, votes and page views are stored with Supabase, our database and storage provider. We do not sell personal data.</p><p>Betting content is analysis only and never guarantees outcomes. If advertising or analytics are added, this page will be updated.</p><p><em>Replace this placeholder with your final policy, and add Terms and Cookie Policy pages.</em></p></div></article>`;
+}
+
+/* ===== Admin ===== */
+async function admin() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) {
+    app.innerHTML = `<div style="max-width:360px;margin:auto"><h1>Admin sign in</h1><input id="em" placeholder="Email"><input id="pw" type="password" placeholder="Password"><button class="btn" id="go">Sign in</button><p id="am"></p></div>`;
+    document.getElementById("go").onclick = async () => { const { error } = await sb.auth.signInWithPassword({ email: em.value, password: pw.value }); if (error) am.textContent = error.message; else admin(); };
+    return;
+  }
+  const [{ data: cats }, { data: posts }, { data: cms }] = await Promise.all([
+    sb.from("categories").select("id,name"), sb.from("posts").select("id,title,status,views,likes_count").order("created_at", { ascending: false }),
+    sb.from("comments").select("id,name,content,status").order("created_at", { ascending: false }).limit(50)]);
+  app.innerHTML = `<div style="max-width:720px;margin:auto"><div class="row"><h1 style="flex:1">Admin</h1><button onclick="sb.auth.signOut().then(admin)">Sign out</button></div><div id="amsg"></div>
+  <p>${posts.length} posts · ${posts.reduce((s, p) => s + p.views, 0)} views · ${posts.reduce((s, p) => s + p.likes_count, 0)} likes · ${cms.length} recent comments</p>
+  <h2>New post</h2><input id="t" placeholder="Title"><select id="c"><option value="">Category</option>${cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select>
+  <input id="img" type="file" accept="image/*"><input id="ex" placeholder="Excerpt"><textarea id="co" rows="9" placeholder="Content (blank line between paragraphs)"></textarea>
+  <label><input type="checkbox" id="fe" style="width:auto"> Featured post</label> <label><input type="checkbox" id="ac" checked style="width:auto"> Allow comments</label>
+  <p><button class="btn" id="sd">Save draft</button> <button class="btn" id="sp">Publish</button></p>
+  <h2>Posts</h2>${posts.map(p => `<div class="row"><span>${esc(p.title)} <em>(${p.status})</em></span><button data-t="${p.id}" data-s="${p.status}">${p.status === "published" ? "Unpublish" : "Publish"}</button><button data-d="${p.id}">Delete</button></div>`).join("")}
+  <h2>Comments</h2>${cms.map(c => `<div class="row"><span><b>${esc(c.name)}</b> <em>(${c.status})</em>: ${esc(c.content)}</span><button data-a="${c.id}">Approve</button><button data-h="${c.id}">Hide</button><button data-x="${c.id}">Delete</button></div>`).join("")}
+  <h2>New poll</h2><input id="pq" placeholder="Question"><input id="po" placeholder="Options, separated by commas"><button class="btn" id="pc">Create poll</button></div>`;
+  const $ = i => document.getElementById(i), say = m => { $("amsg").innerHTML = `<p class="msg">${esc(m)}</p>`; };
+  async function save(status) {
+    if (!$("t").value.trim()) return say("Enter a title.");
+    let featured_image = null; const f = $("img").files[0];
+    if (f) { const path = `posts/${Date.now()}-${f.name.replace(/[^a-z0-9.]/gi, "_")}`; const up = await sb.storage.from("sporthub-media").upload(path, f);
+      if (up.error) return say("Image upload failed: " + up.error.message); featured_image = sb.storage.from("sporthub-media").getPublicUrl(path).data.publicUrl; }
+    const { error } = await sb.from("posts").insert({ title: $("t").value.trim(), slug: slugify($("t").value) + "-" + Date.now().toString(36).slice(-4), excerpt: $("ex").value, content: $("co").value,
+      category_id: $("c").value || null, featured: $("fe").checked, allow_comments: $("ac").checked, featured_image, status, published_at: status === "published" ? new Date().toISOString() : null });
+    if (error) say(error.message); else { await admin(); document.getElementById("amsg").innerHTML = `<p class="msg">${status === "published" ? "Published" : "Draft saved"}</p>`; }
+  }
+  $("sd").onclick = () => save("draft"); $("sp").onclick = () => save("published");
+  const act = async (fn) => { await fn; admin(); };
+  app.querySelectorAll("[data-t]").forEach(b => b.onclick = () => act(sb.from("posts").update({ status: b.dataset.s === "published" ? "draft" : "published", published_at: b.dataset.s === "published" ? null : new Date().toISOString() }).eq("id", b.dataset.t)));
+  app.querySelectorAll("[data-d]").forEach(b => b.onclick = () => confirm("Delete this post?") && act(sb.from("posts").delete().eq("id", b.dataset.d)));
+  app.querySelectorAll("[data-a]").forEach(b => b.onclick = () => act(sb.from("comments").update({ status: "approved" }).eq("id", b.dataset.a)));
+  app.querySelectorAll("[data-h]").forEach(b => b.onclick = () => act(sb.from("comments").update({ status: "hidden" }).eq("id", b.dataset.h)));
+  app.querySelectorAll("[data-x]").forEach(b => b.onclick = () => act(sb.from("comments").delete().eq("id", b.dataset.x)));
+  $("pc").onclick = async () => { const opts = $("po").value.split(",").map(s => s.trim()).filter(Boolean);
+    if (!$("pq").value.trim() || opts.length < 2) return say("Enter a question and at least two options, separated by commas.");
+    const { data, error } = await sb.from("polls").insert({ question: $("pq").value.trim() }).select("id").single(); if (error) return say(error.message);
+    await sb.from("poll_options").insert(opts.map(option_name => ({ poll_id: data.id, option_name }))); say("Poll created"); };
+}
+
+/* ===== PWA: service worker + install prompt ===== */
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+let deferred; addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; if (!localStorage.getItem("no_install")) document.getElementById("install").hidden = false; });
+document.getElementById("yes").onclick = async () => { document.getElementById("install").hidden = true; deferred?.prompt(); };
+document.getElementById("no").onclick = () => { document.getElementById("install").hidden = true; localStorage.setItem("no_install", "1"); };
+route();
+</script>
+</body>
+</html>
