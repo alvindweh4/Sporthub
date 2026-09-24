@@ -8,6 +8,9 @@
 <meta name="theme-color" content="#0F6B3F">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 :root{--turf:#0F6B3F;--deep:#083D25;--ink:#12201A;--line:#DDE5E0;--flare:#FFC72C;--mist:#F2F5F3}
 *{box-sizing:border-box}
@@ -60,20 +63,20 @@ footer div{max-width:1100px;margin:auto;display:flex;flex-wrap:wrap;gap:16px;jus
 <body>
 <header><div class="bar">
   <a class="logo" href="#/">SPORT<b>HUB</b></a>
-  <nav><a href="#/category/football-news">News</a><a href="#/category/betting-tips">Betting Tips</a><a href="#/category/match-updates">Matches</a><a href="#/polls">Polls</a></nav>
+  <nav id="nav"><a href="#/category/football-news">News</a><a href="#/category/betting-tips">Betting Tips</a><a href="#/category/match-updates">Matches</a><a href="#/polls">Polls</a></nav>
   <a href="#/search" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a>
 </div></header>
 <main id="app"></main>
 <footer><div><span><b>SPORTHUB</b><br>Your home for football news, updates and analysis.</span>
-<span><a href="#/privacy">Privacy Policy</a> &nbsp; <a href="#/admin">Admin</a> &nbsp; © 2026 Sporthub</span></div></footer>
-<div id="install" hidden><b>Install Sporthub</b><p style="margin:4px 0 10px">Get football news and updates from your home screen.</p>
+<span><a href="#/privacy">Privacy Policy</a> &nbsp; <a href="#/admin">Admin</a> &nbsp; <a href="#" id="inl">Install app</a> &nbsp; © 2026 Sporthub</span></div></footer>
+<div id="install" hidden><b>Install Sporthub</b><p id="itxt" style="margin:4px 0 10px">Get football news and updates from your home screen.</p>
 <button class="btn" id="yes">Install</button> <button class="lnk" id="no">Not now</button></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 /* ===== 1. Paste your Supabase values here (Project Settings > API). The anon key is safe to expose; RLS protects your data. ===== */
-const SUPABASE_URL = "https://vwibztcgwapxvvlzuykq.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3aWJ6dGNnd2FweHZ2bHp1eWtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMzc1OTAsImV4cCI6MjEwNTgxMzU5MH0.jbWMAgrN7M9ygG3I7qNfSxn2dl6z9fdFuInGsKOOc50";
+const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const app = document.getElementById("app");
@@ -88,6 +91,14 @@ const shareIco = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" st
 const fail = e => `<p class="msg">Something went wrong: ${esc(e.message || e)}. Check your Supabase URL and key in index.html.</p>`;
 const card = p => `<a class="card" href="#/post/${esc(p.slug)}">${p.featured_image ? `<img src="${esc(p.featured_image)}" alt="" loading="lazy">` : ""}<div><small>${esc(p.categories?.name)}</small><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p><div class="meta"><span>${heart()} ${p.likes_count}</span><span>${ago(p.published_at)}</span></div></div></a>`;
 const grid = list => `<div class="grid">${list.map(card).join("")}</div>`;
+
+/* ===== Nav: every category from the database ===== */
+const ORDER = ["football-news", "match-updates", "betting-tips", "international-football", "champions-league", "transfers"];
+async function loadNav() {
+  const { data } = await sb.from("categories").select("name,slug"); if (!data || !data.length) return;
+  data.sort((a, b) => { const x = ORDER.indexOf(a.slug), y = ORDER.indexOf(b.slug); return (x < 0 ? 99 : x) - (y < 0 ? 99 : y) || a.name.localeCompare(b.name); });
+  document.getElementById("nav").innerHTML = data.map(c => `<a href="#/category/${esc(c.slug)}">${esc(c.name)}</a>`).join("") + '<a href="#/polls">Polls</a>';
+}
 
 /* ===== Router ===== */
 async function route() {
@@ -173,7 +184,9 @@ function privacy() {
 }
 
 /* ===== Admin ===== */
+let editPost = null;
 async function admin() {
+  editPost = null;
   const { data: { user } } = await sb.auth.getUser();
   if (!user) {
     app.innerHTML = `<div style="max-width:360px;margin:auto"><h1>Admin sign in</h1><input id="em" placeholder="Email"><input id="pw" type="password" placeholder="Password"><button class="btn" id="go">Sign in</button><p id="am"></p></div>`;
@@ -181,15 +194,15 @@ async function admin() {
     return;
   }
   const [{ data: cats }, { data: posts }, { data: cms }] = await Promise.all([
-    sb.from("categories").select("id,name"), sb.from("posts").select("id,title,status,views,likes_count").order("created_at", { ascending: false }),
+    sb.from("categories").select("id,name"), sb.from("posts").select("id,title,slug,status,views,likes_count").order("created_at", { ascending: false }),
     sb.from("comments").select("id,name,content,status").order("created_at", { ascending: false }).limit(50)]);
   app.innerHTML = `<div style="max-width:720px;margin:auto"><div class="row"><h1 style="flex:1">Admin</h1><button onclick="sb.auth.signOut().then(admin)">Sign out</button></div><div id="amsg"></div>
   <p>${posts.length} posts · ${posts.reduce((s, p) => s + p.views, 0)} views · ${posts.reduce((s, p) => s + p.likes_count, 0)} likes · ${cms.length} recent comments</p>
-  <h2>New post</h2><input id="t" placeholder="Title"><select id="c"><option value="">Category</option>${cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select>
-  <input id="img" type="file" accept="image/*"><input id="ex" placeholder="Excerpt"><textarea id="co" rows="9" placeholder="Content (blank line between paragraphs)"></textarea>
+  <h2 id="fh">New post</h2><input id="t" placeholder="Title"><select id="c"><option value="">Category</option>${cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select>
+  <input id="img" type="file" accept="image/*"><small id="imn"></small><input id="ex" placeholder="Excerpt"><textarea id="co" rows="9" placeholder="Content (blank line between paragraphs)"></textarea>
   <label><input type="checkbox" id="fe" style="width:auto"> Featured post</label> <label><input type="checkbox" id="ac" checked style="width:auto"> Allow comments</label>
-  <p><button class="btn" id="sd">Save draft</button> <button class="btn" id="sp">Publish</button></p>
-  <h2>Posts</h2>${posts.map(p => `<div class="row"><span>${esc(p.title)} <em>(${p.status})</em></span><button data-t="${p.id}" data-s="${p.status}">${p.status === "published" ? "Unpublish" : "Publish"}</button><button data-d="${p.id}">Delete</button></div>`).join("")}
+  <p><button class="btn" id="sd">Save draft</button> <button class="btn" id="sp">Publish</button> <button class="lnk" id="cx" hidden>Cancel edit</button></p>
+  <h2>Posts</h2>${posts.map(p => `<div class="row"><span>${esc(p.title)} <em>(${p.status})</em></span><button data-e="${p.id}">Edit</button>${p.status === "published" ? `<a class="lnk" href="#/post/${esc(p.slug)}">View</a>` : ""}<button data-t="${p.id}" data-s="${p.status}">${p.status === "published" ? "Unpublish" : "Publish"}</button><button data-d="${p.id}">Delete</button></div>`).join("")}
   <h2>Comments</h2>${cms.map(c => `<div class="row"><span><b>${esc(c.name)}</b> <em>(${c.status})</em>: ${esc(c.content)}</span><button data-a="${c.id}">Approve</button><button data-h="${c.id}">Hide</button><button data-x="${c.id}">Delete</button></div>`).join("")}
   <h2>New poll</h2><input id="pq" placeholder="Question"><input id="po" placeholder="Options, separated by commas"><button class="btn" id="pc">Create poll</button></div>`;
   const $ = i => document.getElementById(i), say = m => { $("amsg").innerHTML = `<p class="msg">${esc(m)}</p>`; };
@@ -198,10 +211,24 @@ async function admin() {
     let featured_image = null; const f = $("img").files[0];
     if (f) { const path = `posts/${Date.now()}-${f.name.replace(/[^a-z0-9.]/gi, "_")}`; const up = await sb.storage.from("sporthub-media").upload(path, f);
       if (up.error) return say("Image upload failed: " + up.error.message); featured_image = sb.storage.from("sporthub-media").getPublicUrl(path).data.publicUrl; }
-    const { error } = await sb.from("posts").insert({ title: $("t").value.trim(), slug: slugify($("t").value) + "-" + Date.now().toString(36).slice(-4), excerpt: $("ex").value, content: $("co").value,
-      category_id: $("c").value || null, featured: $("fe").checked, allow_comments: $("ac").checked, featured_image, status, published_at: status === "published" ? new Date().toISOString() : null });
-    if (error) say(error.message); else { await admin(); document.getElementById("amsg").innerHTML = `<p class="msg">${status === "published" ? "Published" : "Draft saved"}</p>`; }
+    const fields = { title: $("t").value.trim(), excerpt: $("ex").value, content: $("co").value, category_id: $("c").value || null, featured: $("fe").checked, allow_comments: $("ac").checked, status };
+    if (featured_image) fields.featured_image = featured_image;
+    let error;
+    if (editPost) { // keep the slug so existing links don't break
+      fields.published_at = status === "published" ? (editPost.published_at || new Date().toISOString()) : null;
+      ({ error } = await sb.from("posts").update(fields).eq("id", editPost.id));
+    } else {
+      ({ error } = await sb.from("posts").insert({ ...fields, slug: slugify(fields.title) + "-" + Date.now().toString(36).slice(-4), featured_image, published_at: status === "published" ? new Date().toISOString() : null }));
+    }
+    if (error) say(error.message); else { const was = editPost; await admin(); document.getElementById("amsg").innerHTML = `<p class="msg">${was ? "Changes saved" : status === "published" ? "Published" : "Draft saved"}</p>`; }
   }
+  app.querySelectorAll("[data-e]").forEach(b => b.onclick = async () => {
+    const { data: p } = await sb.from("posts").select("*").eq("id", b.dataset.e).single(); editPost = p;
+    $("t").value = p.title; $("c").value = p.category_id || ""; $("ex").value = p.excerpt || ""; $("co").value = p.content || "";
+    $("fe").checked = !!p.featured; $("ac").checked = p.allow_comments !== false; $("fh").textContent = "Edit post";
+    $("imn").textContent = p.featured_image ? "Current image is kept unless you choose a new one." : ""; $("sd").textContent = "Save as draft"; $("sp").textContent = "Save and publish"; $("cx").hidden = false; window.scrollTo(0, 0);
+  });
+  $("cx").onclick = () => admin();
   $("sd").onclick = () => save("draft"); $("sp").onclick = () => save("published");
   const act = async (fn) => { await fn; admin(); };
   app.querySelectorAll("[data-t]").forEach(b => b.onclick = () => act(sb.from("posts").update({ status: b.dataset.s === "published" ? "draft" : "published", published_at: b.dataset.s === "published" ? null : new Date().toISOString() }).eq("id", b.dataset.t)));
@@ -217,9 +244,25 @@ async function admin() {
 
 /* ===== PWA: service worker + install prompt ===== */
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
-let deferred; addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; if (!localStorage.getItem("no_install")) document.getElementById("install").hidden = false; });
-document.getElementById("yes").onclick = async () => { document.getElementById("install").hidden = true; deferred?.prompt(); };
-document.getElementById("no").onclick = () => { document.getElementById("install").hidden = true; localStorage.setItem("no_install", "1"); };
+let deferred;
+const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const ib = document.getElementById("install"), yes = document.getElementById("yes"), itxt = document.getElementById("itxt");
+function showInstall(force) {
+  if (standalone || (!force && sessionStorage.getItem("no_install"))) return;
+  yes.hidden = !deferred;
+  itxt.textContent = deferred ? "Get football news and updates from your home screen."
+    : ios ? "Tap the Share button in Safari, then choose Add to Home Screen."
+    : "Open your browser menu (⋮) and choose Install app or Add to Home screen.";
+  ib.hidden = false;
+}
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; showInstall(); });
+addEventListener("appinstalled", () => { ib.hidden = true; deferred = null; });
+yes.onclick = async () => { ib.hidden = true; if (deferred) { deferred.prompt(); await deferred.userChoice; deferred = null; } };
+document.getElementById("no").onclick = () => { ib.hidden = true; sessionStorage.setItem("no_install", "1"); };
+document.getElementById("inl").onclick = e => { e.preventDefault(); showInstall(true); };
+if (ios) setTimeout(() => showInstall(), 2500); // iOS never fires the install event, so show the how-to
+loadNav();
 route();
 </script>
 </body>
